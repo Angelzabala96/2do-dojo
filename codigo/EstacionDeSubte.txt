@@ -1,0 +1,239 @@
+/*
+----------------------Consigna SUBTE-----------------------------------------
+La empresa “UTN FRA Robotics” ganó la licitación de un proyecto, y deberá
+Implementar un sistema que permita al usuario saber a qué estación de subte está
+llegando, aparte el sistema muestra las estaciones que faltan hasta llegar a destino,
+para ello debemos utilizar 4 LEDs y el display de 7 segmentos. Esta vez el buzzer
+deberá emitir un sonido diferente cada vez que se llegue a una estación.
+El sistema deberá arrancar apagado, luego de presionar el botón empezará y hará lo
+pedido.
+-------------------------------------------------------------------------------
+*/
+
+#define constitucion 11
+#define moreno 10
+#define sanJuan 12
+#define independencia 13
+#define buzzer A0
+#define A 7
+#define B 6
+#define C A3
+#define D A2
+#define E A1
+#define F 8
+#define G 5
+#define pulsador 9
+
+
+void imprimirMensaje(int opcion);
+void apagarTodo(int pin_led);
+void encenderCero(int pin_led, int pin, int pin_dos, int pin_tres, int pin_cuatro, int pin_cinco, int pin_seis);
+void encenderUno(int pin_led, int pin, int pin_dos);
+void encenderDos(int pin_led, int pin, int pin_dos, int pin_tres, int pin_cuatro, int pin_cinco);
+void encenderTres(int pin_led, int pin, int pin_dos, int pin_tres, int pin_cuatro, int pin_cinco);
+void frecuenciaSonar(int frecuencia);
+void encenderLed(int pin);
+
+int contador = 0;
+
+void setup()
+{
+  pinMode(constitucion, OUTPUT);
+  pinMode(independencia, OUTPUT);
+  pinMode(moreno, OUTPUT);
+  pinMode(sanJuan, OUTPUT);
+  pinMode(A, OUTPUT);
+  pinMode(B, OUTPUT);
+  pinMode(C, OUTPUT);
+  pinMode(D, OUTPUT);
+  pinMode(E, OUTPUT);
+  pinMode(F, OUTPUT);
+  pinMode(G, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  pinMode(pulsador, INPUT_PULLUP);
+  
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  int tiempo = 3000;
+  int boton;
+  
+  boton = digitalRead(pulsador);
+  
+  if(boton == LOW)
+  {
+    if(contador == 0)
+      
+    {
+      imprimirMensaje(1);
+      encenderTres(constitucion, A, B, C, D, G);
+      frecuenciaSonar(500);
+      delay(tiempo);
+      
+      imprimirMensaje(2);
+      digitalWrite(constitucion, LOW);
+      apagarTodo(constitucion);
+      encenderDos(sanJuan, A, B, D, E, G);
+      frecuenciaSonar(1000);
+      delay(tiempo);
+      
+      
+      imprimirMensaje(3);
+      apagarTodo(sanJuan);
+      encenderUno(independencia, B, C);
+      frecuenciaSonar(1500);
+      delay(tiempo);
+      
+      
+      imprimirMensaje(4);
+      apagarTodo(independencia);
+      encenderCero(moreno, A, B, C, D, E, F);
+      frecuenciaSonar(2000);
+      delay(tiempo);
+     
+      apagarTodo(moreno);
+      
+      
+      contador = 1;
+ 	}
+  	else
+  	{
+      imprimirMensaje(5);
+      encenderTres(moreno, A, B, C, D, G);
+      frecuenciaSonar(2000);
+      delay(tiempo);
+      
+      imprimirMensaje(6);
+      apagarTodo(moreno);
+      encenderDos(independencia, A, B, D, E, G);
+      frecuenciaSonar(1500);
+      delay(tiempo);
+      
+      
+      imprimirMensaje(7);
+      apagarTodo(independencia);
+      encenderUno(sanJuan, B, C);
+      frecuenciaSonar(1000);
+      delay(tiempo);
+      
+      
+      imprimirMensaje(8);
+      apagarTodo(sanJuan);
+      encenderCero(constitucion, A, B, C, D, E, F);
+      frecuenciaSonar(500);
+      delay(tiempo);
+      
+      
+      digitalWrite(constitucion, LOW);
+      apagarTodo(constitucion);
+      
+      
+      contador = 0;
+    
+  	}
+   }
+}
+
+void imprimirMensaje(int opcion)
+{
+  switch(opcion)
+  {
+   case 1:
+   Serial.println("Estacion: Constitucion");
+   Serial.println("Proxima estacion: San Juan");
+   break;
+   case 2:
+   Serial.println("Estacion: San Juan");
+   Serial.println("Proxima estacion: Independencia");
+   break;
+   case 3:
+   Serial.println("Estacion: Independencia");
+   Serial.println("Proxima estacion: Moreno");
+   break;
+   case 4:
+   Serial.println("Estacion: Moreno");
+   Serial.println("Estacion terminal");
+   break;
+   case 5:
+   Serial.println("Estacion: Moreno");
+   Serial.println("Proxima estacion: Independencia");
+   break;
+   case 6:
+   Serial.println("Estacion: Independencia");
+   Serial.println("Proxima estacion: San Juan");
+   break;
+   case 7:
+   Serial.println("Estacion: San Juan");
+   Serial.println("Proxima estacion: Constitucion");
+   break;
+   case 8:
+   Serial.println("Estacion: Constitucion");
+   Serial.println("Estacion terminal");
+   break;
+  }
+ }
+  
+void apagarTodo(int pin_led)
+{
+  digitalWrite(pin_led, LOW);
+  digitalWrite(A, LOW);
+  digitalWrite(B, LOW);
+  digitalWrite(C, LOW);
+  digitalWrite(D, LOW);
+  digitalWrite(E, LOW);
+  digitalWrite(F, LOW);
+  digitalWrite(G, LOW);
+}
+  
+void encenderCero(int pin_led, int pin, int pin_dos, int pin_tres, int pin_cuatro, int pin_cinco, int pin_seis)
+{
+  encenderLed(pin_led);
+  digitalWrite(pin, HIGH);
+  digitalWrite(pin_dos, HIGH);
+  digitalWrite(pin_tres, HIGH);
+  digitalWrite(pin_cuatro, HIGH);
+  digitalWrite(pin_cinco, HIGH);
+  digitalWrite(pin_seis, HIGH);
+}
+ 
+  
+void encenderUno(int pin_led, int pin, int pin_dos)
+{
+  encenderLed(pin_led);
+  digitalWrite(pin, HIGH);
+  digitalWrite(pin_dos, HIGH);
+}
+
+void encenderDos(int pin_led, int pin, int pin_dos, int pin_tres, int pin_cuatro, int pin_cinco)
+{
+  encenderLed(pin_led);
+  digitalWrite(pin, HIGH);
+  digitalWrite(pin_dos, HIGH);
+  digitalWrite(pin_tres, HIGH);
+  digitalWrite(pin_cuatro, HIGH);
+  digitalWrite(pin_cinco, HIGH);
+}
+
+void encenderTres(int pin_led, int pin, int pin_dos, int pin_tres, int pin_cuatro, int pin_cinco)
+{
+  encenderLed(pin_led);
+  digitalWrite(pin, HIGH);
+  digitalWrite(pin_dos, HIGH);
+  digitalWrite(pin_tres, HIGH);
+  digitalWrite(pin_cuatro, HIGH);
+  digitalWrite(pin_cinco, HIGH);
+}
+
+void frecuenciaSonar(int frecuencia)
+{
+  tone(buzzer, frecuencia);
+  delay(500);
+  noTone(buzzer);
+}
+
+void encenderLed(int pin)
+{
+  digitalWrite(pin, HIGH);
+}
